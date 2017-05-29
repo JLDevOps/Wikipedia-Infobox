@@ -31,5 +31,4 @@ Scraping the infobox information of people's profiles on Wikipedia.  This utiliz
     python unit-csv.py
     ```
     Running this command will result in (As of 5/29/2017):
-    ![Image of Result](https://jldevops.github.com/images/result.png)
-    
+    ![](https://github.com/JLDevOps/Wikipedia-Infobox-Scraping-By-Python/blob/master/image/result.png?raw=true)
