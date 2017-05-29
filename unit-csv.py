@@ -1,5 +1,5 @@
 import unittest, csv
-from age import wikiAge, _parseInfobox
+from infobox import wikiAge, _parseInfobox
 
 with open('names.csv', 'rb') as csvfile:
 	fileReader = csv.reader(csvfile, delimiter=',')
