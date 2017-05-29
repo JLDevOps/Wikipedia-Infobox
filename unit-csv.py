@@ -1,6 +1,7 @@
 import unittest, csv
 from infobox import wikiAge, _parseInfobox
 
+''' CSV Reader to test the infobox.py file for a list of People's names on Wikipedia '''
 with open('names.csv', 'rb') as csvfile:
 	fileReader = csv.reader(csvfile, delimiter=',')
 	for row in fileReader:
@@ -13,24 +14,15 @@ with open('names.csv', 'rb') as csvfile:
 
 
 
+''' Unit tests for the names and information '''
+''' Not finished writing '''
 
-
-
-##Unit tests for the names and birthdays##
 # class nameTest(unittest.TestCase):
 
 #     def testOne(self):
-#         self.failUnless(IsOdd(1))
-
-#     def testTwo(self):
-#         self.failIf(IsOdd(2))
-
-#     def testThree(self):
-#     	self.failIf()
-
+#     
 # def main():
 #     unittest.main()
 
 # if __name__ == '__main__':
-
 #     main()

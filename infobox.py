@@ -2,18 +2,26 @@ import urllib2, json, pprint, re, datetime
 import mwparserfromhell
 
 def _parseDate(wikiDate):
+  ''' Given the JSON data from InfoBox():
+      Input: JSON Data from InfoBox() that located Birth_Date and Death_Date
+      Output: Birth_Date and Death_Date in the format, MM - DD - YYYY
+  '''
   template = mwparserfromhell.parse("%s"%wikiDate.value)
   try:
+
     try:
+      ## This parses and separates the year, month, and day into separate entities to combine -- MM - DD - YYYY ##
       d = map(template.filter_templates()[0].get, [1,2,3])
       d = [int('%s'%x.value) for x in d]
       dateFinal = str(d[1]) +"-"+ str(d[2]) +"-"+ str(d[0])
       return dateFinal
     except Exception as e:
+      ## This exception is used if there is only a Year for the Person ###
       d = map(template.filter_templates()[0].get, [1])
       d = [int('%s'%x.value) for x in d]
       dateFinal = str(d[0])
       return dateFinal
+
   except Exception as e:
     tempTest = re.sub('\n', '', str(template))
     return str(tempTest)
@@ -22,20 +30,27 @@ def _parseDate(wikiDate):
     return d
 
 def _parsePlace(wikiPlace):
+  ''' Given the JSON data from InfoBox():
+      Input: JSON Data from InfoBox() that located Birth_Place and Death_Place
+      Output: Birth_Place and Death_Place strings
+  '''
   template = mwparserfromhell.parse("%s"%wikiPlace.value)
-  tempTest = re.sub('[\(\)\{\}<>\[\]\|\n]', '', str(template))
-  tempFinal = re.sub('nowrap', '', str(tempTest))
-  tempFinal2 = re.sub('br/', '', str(tempFinal))
-  return (str(tempFinal2))
+  tempPhase = re.sub('[\(\)\{\}<>\[\]\|\n]', '', str(template))
+  tempPhase2 = re.sub('nowrap', '', str(tempPhase))
+  tempFinal= re.sub('br/', '', str(tempPhase2))
+  return (str(tempFinal))
 
 def _parseInfobox(page):
-  '''Parse out the nice mediawiki markdown to get birth and death
-  Input:
-    mediawiki unicode page string
-  Returns:
-    a dictionary with name(string), birth_date:DateTime, death_date:DateTime
-  '''
-        
+  ''' Given the JSON data from WikiAge():
+      Input: JSON Data from WikiAge(), locates the Infobox heading
+      Output: Selected information from each specific function
+
+      Ex. Key:birth_date  Value: 2-15-1564
+          Key:death_place  Value:  Arcetri, Grand Duchy of Tuscany, Italy
+          Key:death_date  Value: 1-8-1642
+          Key:birth_place  Value:  Pisa, Duchy of Florence, Italy
+          Key:name  Value:  Galileo Galilei
+  '''     
   try:
     code = mwparserfromhell.parse(page)
     for template in code.filter_templates():
@@ -47,7 +62,6 @@ def _parseInfobox(page):
           output['name'] = "%s"%template.get('name').value
         except ValueError as e:
           output['name'] = "%s"%template.get('birth_name').value
-
         # print "Name was found"
 
         for date in ['birth_date', 'death_date']:
@@ -57,19 +71,12 @@ def _parseInfobox(page):
             item = None
           output[date] = item
 
-        for birthPlace in ['birth_place']:
+        for place in ['birth_place', 'death_place']:
           try:
-            item = _parsePlace(template.get(birthPlace))
+            item = _parsePlace(template.get(place))
           except ValueError as e:
             item = None
-          output[birthPlace] = item
-
-        for deathPlace in ['death_place']:
-          try:
-            item = _parsePlace(template.get(deathPlace))
-          except ValueError as e:
-            item = None
-          output[deathPlace] = item
+          output[place] = item
         
         
         return output
@@ -77,25 +84,15 @@ def _parseInfobox(page):
     raise ValueError('Missing InfoBox')
 
   except Exception as e:
-    # print "Failed to parse find infobox or something else"
+    ## Uncommented for Now for Testing ##
+    # print "Failed to Properly Parse Infobox for Information"
     # raise e
     pass
 
 
 def wikiAge(wikiTitle, function=None):
-  ''' Parse a wikipedia url to run a function on the data
-  Input:
-    wikiTitle : Title of a wiki page for an individual with born and died date
-    function : a python function which operates on a mediawikipage
-  Output:
-    Person Dictionary with ['name', 'birth_date', 'death_date'
+  ''' Parse a wikipedia url to run a function on the data '''
 
-  Example:
-    person = wikiDate('Albert_Einstein', function=_parseInfobox)
-    assert person['name'] == 'Albert Einstein'
-    assert person['birth_date'] == datetime.date(1879, 03, 14) # '14 March 1879'
-    assert person['death_date'] == datetime.date(1955, 04, 18) # '18 April 1955'
-  '''
   URLTEMPLATE = 'http://en.wikipedia.org/w/api.php?format=json&action=query&titles=%s&prop=revisions&rvprop=content'
   try:
     pageJson = urllib2.urlopen(URLTEMPLATE%(wikiTitle)).readlines()[0]
@@ -112,7 +109,8 @@ def wikiAge(wikiTitle, function=None):
     return function(page)
 
   except Exception as e:
-    # print 'Failed to process Page -- Probably means that the wiki page was missing something important'
+    ## Uncommented for Now for Testing ##
+    # print 'Failed to Process Wikipedia Information -- Make sure the link is registering'
     # raise e
     pass
 
@@ -125,11 +123,5 @@ def wikiAge(wikiTitle, function=None):
 #       print 'Key:%s  Value: %s'%(key,person[key])
 #   except Exception as e:
 #     pass
-#   person = wikiAge('Galileo_Galilei', function=_parseInfobox)
-#   for key in person:
-#     print 'Key:%s  Value: %s'%(key,person[key])
 
-  # person = wikiAge('Lawrence_Summers', function=_parseInfobox)
-  # for key in person:
-  #   print 'Key:%s  Value: %s'%(key,person[key])
 
