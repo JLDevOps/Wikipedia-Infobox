@@ -47,6 +47,7 @@ def parse_place(wiki_place):
             town = re.sub('nowrap\|', '', town)
             town = re.sub('\|.*?\]', '', town)
             town = re.sub('[\(\[].*?[\)\]]', '', town)
+            town = re.sub('].*?', '', town)
             town = re.sub('br/', '', town)
         except Exception as e:
             print "ERROR: Information regarding the person's town could not be found"
@@ -55,15 +56,18 @@ def parse_place(wiki_place):
         try:
             city = re.sub('nowrap\|', '', city)
             city = re.sub('\|.*?\]', '', city)
-            city = re.sub('[\(\[].*?[\)\]]', '', city)
+            city = re.sub('[\(\[].*?[\).*?\]]', '', city)
+            city = re.sub('].*?', '', city)
+            city = re.sub('\)', '', city)
             city = re.sub('br/', '', city)
         except Exception as e:
             print "ERROR: Information regarding the person's city could not be found"
             raise e
         try:
             country = re.sub('nowrap\|', '', country)
-            country = re.sub('\|.*?\]\]', '', country)
+            country = re.sub('\|.*?\]', '', country)
             country = re.sub('[\(\[].*?[\)\]]', '', country)
+            country = re.sub('].*?', '', country)
             country = re.sub('br/', '', country)
         except Exception as e:
             print "ERROR: Information regarding the person's country could not be found"
@@ -99,10 +103,10 @@ def parse_infobox(page):
                 try:
                     try:
                         output['name'] = "%s" % template.get('name').value
-                    except Exception as ex:
+                    except ValueError as e:
                         output['name'] = "%s" % template.get('birth_name').value
                 except ValueError as e:
-                    print "Name was not Found"
+                    print "ERROR: Name was not Found"
                     raise e
 
                 for date in ['birth_date', 'death_date']:
@@ -165,7 +169,7 @@ if __name__ == '__main__':
     except Exception as e:
         pass
 
-    person = wiki_info('Mark_Zuckerberg', function=parse_infobox)
+    person = wiki_info('Mark Zuckerberg', function=parse_infobox)
     try:
         for key in person:
             print 'Key:%s  Value: %s' % (key, person[key])
