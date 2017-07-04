@@ -152,7 +152,6 @@ def wiki_info(wiki_title, function=None):
         page = page['query']['pages']
         page_id = page.keys()[0]
         page = page[page_id]['revisions'][0]['*']
-        # print page
         return function(page)
     except Exception as e:
         print 'ERROR: Failed to parse the Wikipedia information'
@@ -160,18 +159,16 @@ def wiki_info(wiki_title, function=None):
 
 
 # Test Cases to Use (Uncomment for use)
-if __name__ == '__main__':
-
-    person = wiki_info('Vladimir Putin', function=parse_infobox)
-    try:
-        for key in person:
-            print 'Key:%s  Value: %s' % (key, person[key])
-    except Exception as e:
-        pass
-
-    person = wiki_info('Mark Zuckerberg', function=parse_infobox)
-    try:
-        for key in person:
-            print 'Key:%s  Value: %s' % (key, person[key])
-    except Exception as e:
-        pass
+# if __name__ == '__main__':
+    # person = wiki_info('Vladimir Putin', function=parse_infobox)
+    # try:
+    #     for key in person:
+    #         print 'Key:%s  Value: %s' % (key, person[key])
+    # except Exception as e:
+    #     pass
+    # person = wiki_info('Mark Zuckerberg', function=parse_infobox)
+    # try:
+    #     for key in person:
+    #         print 'Key:%s  Value: %s' % (key, person[key])
+    # except Exception as e:
+    #     pass
