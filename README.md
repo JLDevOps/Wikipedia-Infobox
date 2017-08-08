@@ -1,4 +1,4 @@
-# Wikipedia-Infobox-Scraping-By-Python
+# Wikipedia Infobox Scraping
 ---
 Scraping the infobox information of people's profiles on Wikipedia.
 

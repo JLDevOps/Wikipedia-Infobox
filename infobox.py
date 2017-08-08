@@ -8,9 +8,7 @@ def parse_date(wiki_date):
       Input: JSON Data from InfoBox() that located Birth_Date and Death_Date
       Output: Birth_Date and Death_Date in the format, MM - DD - YYYY
     '''
-
     template = mwparserfromhell.parse("%s" % wiki_date.value)
-    # print template
     try:
         try:
             # This parses and separates the year, month, and day into separate entities to combine -- MM - DD - YYYY #
@@ -24,7 +22,6 @@ def parse_date(wiki_date):
             d = [int('%s' % x.value) for x in d]
             dateFinal = str(d[0])
             return dateFinal
-
     except Exception as e:
         print "ERROR: " + wiki_date + "not found in the infobox."
         raise e
@@ -38,9 +35,7 @@ def parse_place(wiki_place):
     '''
     template = mwparserfromhell.parse("%s" % wiki_place.value)
     try:
-        # template = re.sub('\|.*?\]', '', str(template))
         template = re.sub('[\{\}<>\[\n]', '', str(template))
-        # template = re.sub('[\{\}<>\[\]\n]', '', str(template))
         [town, city, country] = template.split(',')
 
         try:
@@ -92,6 +87,12 @@ def parse_infobox(page):
           Key:birth_place  Value:  Pisa, Duchy of Florence, Italy
           Key:name  Value:  Galileo Galilei
     '''
+    #print page
+    test_value= re.findall('(?<=birth_place = )(.*)', page, re.UNICODE)
+
+    test_encode = unicode(str(test_value), "utf-8")
+    print (test_encode)
+
 
     try:
         code = mwparserfromhell.parse(page)
@@ -138,9 +139,7 @@ def wiki_info(wiki_title, function=None):
     ''' Parse a wikipedia url to run a function on the data '''
 
     url_template = 'http://en.wikipedia.org/w/api.php?format=json&action=query&titles=%s&prop=revisions&rvprop=content'
-
     wiki_title = wiki_title.replace(" ", "_")
-
     try:
         page_json = urllib2.urlopen(url_template % wiki_title).readlines()[0]
     except Exception as e:
@@ -158,17 +157,17 @@ def wiki_info(wiki_title, function=None):
         raise e
 
 
-# Test Cases to Use (Uncomment for use)
-# if __name__ == '__main__':
-    # person = wiki_info('Vladimir Putin', function=parse_infobox)
-    # try:
-    #     for key in person:
-    #         print 'Key:%s  Value: %s' % (key, person[key])
-    # except Exception as e:
-    #     pass
-    # person = wiki_info('Mark Zuckerberg', function=parse_infobox)
-    # try:
-    #     for key in person:
-    #         print 'Key:%s  Value: %s' % (key, person[key])
-    # except Exception as e:
-    #     pass
+#Test Cases to Use (Uncomment for use)
+if __name__ == '__main__':
+    person = wiki_info('Albert Einstein', function=parse_infobox)
+    try:
+        for key in person:
+            print 'Key:%s  Value: %s' % (key, person[key])
+    except Exception as e:
+        pass
+    person = wiki_info('Mark Zuckerberg', function=parse_infobox)
+    try:
+        for key in person:
+            print 'Key:%s  Value: %s' % (key, person[key])
+    except Exception as e:
+        pass
