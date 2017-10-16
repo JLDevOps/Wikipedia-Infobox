@@ -1,5 +1,6 @@
 # Wikipedia Infobox Scraping
----
+[![Build Status](https://travis-ci.org/JLDevOps/Wikipedia-Infobox.svg?branch=master)](https://travis-ci.org/JLDevOps/Wikipedia-Infobox)
+
 Scraping the infobox information of people's profiles on Wikipedia.
 
 (As of 5/29/2017) This is only picking up the person's name, birth place, birth date, death date, and death place from Wikipedia.  The strings are being refined for output.
